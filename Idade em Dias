@@ -1,0 +1,15 @@
+#include <stdio.h>
+ 
+int main() {
+ 
+    int totdias, anos, meses, dias;
+    scanf("%d", &totdias);
+    anos=totdias/365;
+    totdias%=365;
+    meses=totdias/30;
+    dias=totdias%30;
+    printf("%d ano(s)\n%d mes(es)\n%d dia(s)\n", anos, meses, dias);
+    
+ 
+    return 0;
+}
