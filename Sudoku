@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int verifica_linha(int matriz[9][9], int linha) {
+int verlinha(int matriz[9][9], int linha) {
     int presente[10] = { 0 };
     for (int i = 0; i < 9; i++) {
         if (matriz[linha][i] < 1 || matriz[linha][i] > 9 || presente[matriz[linha][i]]) {
@@ -11,7 +11,7 @@ int verifica_linha(int matriz[9][9], int linha) {
     return 1;
 }
 
-int verifica_coluna(int matriz[9][9], int coluna) {
+int vercoluna(int matriz[9][9], int coluna) {
     int presente[10] = { 0 };
     for (int i = 0; i < 9; i++) {
         if (matriz[i][coluna] < 1 || matriz[i][coluna] > 9 || presente[matriz[i][coluna]]) {
@@ -22,11 +22,11 @@ int verifica_coluna(int matriz[9][9], int coluna) {
     return 1;
 }
 
-int verifica_regiao(int matriz[9][9], int inicio_linha, int inicio_coluna) {
+int verreg(int matriz[9][9], int inlinha, int incoluna) {
     int presente[10] = { 0 };
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            int num = matriz[inicio_linha + i][inicio_coluna + j];
+            int num = matriz[inlinha + i][incoluna + j];
             if (num < 1 || num > 9 || presente[num]) {
                 return 0;
             }
@@ -36,15 +36,15 @@ int verifica_regiao(int matriz[9][9], int inicio_linha, int inicio_coluna) {
     return 1;
 }
 
-int verifica_sudoku(int matriz[9][9]) {
+int versudoku(int matriz[9][9]) {
     for (int i = 0; i < 9; i++) {
-        if (!verifica_linha(matriz, i) || !verifica_coluna(matriz, i)) {
+        if (!verlinha(matriz, i) || !vercoluna(matriz, i)) {
             return 0;
         }
     }
     for (int i = 0; i < 9; i += 3) {
         for (int j = 0; j < 9; j += 3) {
-            if (!verifica_regiao(matriz, i, j)) {
+            if (!verreg(matriz, i, j)) {
                 return 0;
             }
         }
@@ -63,7 +63,7 @@ int main() {
             }
         }
         printf("Instancia %d\n", k);
-        if (verifica_sudoku(matriz)) {
+        if (versudoku(matriz)) {
             printf("SIM\n");
         } else {
             printf("NAO\n");
