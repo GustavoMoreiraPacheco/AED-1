@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_N 100
+#define MAX_NOME 21
+
+int comparar(const void *a, const void *b) {
+    return strcmp(*(const char **)a, *(const char **)b);
+}
+
+int main() {
+    int N, K;
+    scanf("%d %d", &N, &K);
+    char nomes[MAX_N][MAX_NOME];
+    char *ordNomes[MAX_N];
+    for (int i = 0; i < N; i++) {
+        scanf("%s", nomes[i]);
+        ordNomes[i] = nomes[i];
+    }
+    qsort(ordNomes, N, sizeof(char *), comparar);
+    printf("%s\n", ordNomes[K - 1]);
+    return 0;
+}
