@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void merge(int vec[], int l, int m, int r) {
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    int *L = (int *)malloc(n1 * sizeof(int));
+    int *R = (int *)malloc(n2 * sizeof(int));
+    for (i = 0; i < n1; i++)
+        L[i] = vec[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = vec[m + 1 + j];
+    i = 0;
+    j = 0;
+    k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            vec[k] = L[i];
+            i++;
+        } else {
+            vec[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < n1) {
+        vec[k] = L[i];
+        i++;
+        k++;
+    }
+    while (j < n2) {
+        vec[k] = R[j];
+        j++;
+        k++;
+    }
+    free(L);
+    free(R);
+}
+
+void mergeSort(int vec[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(vec, l, m);
+        mergeSort(vec, m + 1, r);
+        merge(vec, l, m, r);
+    }
+}
+
+int main() {
+    int n = 400000;
+    int *vec = (int *)malloc(n * sizeof(int));
+    srand(time(NULL));
+    for (int i = 0; i < n; i++) {
+        vec[i] = rand() % 1000000;
+    }
+    clock_t start = clock();
+    mergeSort(vec, 0, n - 1);
+    clock_t end = clock();
+    printf("Tempo de execução: %f segundos\n", (double)(end - start) / CLOCKS_PER_SEC);
+    free(vec);
+    return 0;
+}
