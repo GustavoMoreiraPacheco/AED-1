@@ -24,7 +24,7 @@ int partir(int vec[], int baixo, int alto) {
 
 void quickSort(int vec[], int baixo, int alto) {
     if (baixo < alto) {
-        int indicePiv = particionar(vec, baixo, alto);
+        int indicePiv = partir(vec, baixo, alto);
         quickSort(vec, baixo, indicePiv - 1);
         quickSort(vec, indicePiv + 1, alto);
     }
