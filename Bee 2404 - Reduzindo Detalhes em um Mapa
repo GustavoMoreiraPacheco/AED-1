@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_CIDADES 500
+#define MAX_RODOVIAS 124750
+
+typedef struct {
+    int origem, destino, peso;
+} Rodovia;
+
+Rodovia rodovias[MAX_RODOVIAS];
+int pai[MAX_CIDADES], rank[MAX_CIDADES];
+int N, M;
+
+int comparar(const void *a, const void *b) {
+    Rodovia *rodoviaA = (Rodovia *)a;
+    Rodovia *rodoviaB = (Rodovia *)b;
+    return rodoviaA->peso - rodoviaB->peso;
+}
+
+void inicializar_uf(int n) {
+    for (int i = 0; i < n; i++) {
+        pai[i] = i;
+        rank[i] = 0;
+    }
+}
+
+int encontrar(int x) {
+    if (pai[x] != x) {
+        pai[x] = encontrar(pai[x]);
+    }
+    return pai[x];
+}
+
+void unir(int x, int y) {
+    int raizX = encontrar(x);
+    int raizY = encontrar(y);
+    if (raizX != raizY) {
+        if (rank[raizX] > rank[raizY]) {
+            pai[raizY] = raizX;
+        } else if (rank[raizX] < rank[raizY]) {
+            pai[raizX] = raizY;
+        } else {
+            pai[raizY] = raizX;
+            rank[raizX]++;
+        }
+    }
+}
+
+int kru() {
+    qsort(rodovias, M, sizeof(Rodovia), comparar);
+    inicializar_uf(N);
+
+    int soma = 0;
+    for (int i = 0; i < M; i++) {
+        int origem = rodovias[i].origem;
+        int destino = rodovias[i].destino;
+        int peso = rodovias[i].peso;
+        if (encontrar(origem) != encontrar(destino)) {
+            unir(origem, destino);
+            soma += peso;
+        }
+    }
+    return soma;
+}
+
+int main() {
+    scanf("%d %d", &N, &M);
+
+    for (int i = 0; i < M; i++) {
+        scanf("%d %d %d", &rodovias[i].origem, &rodovias[i].destino, &rodovias[i].peso);
+        rodovias[i].origem--;
+        rodovias[i].destino--;
+    }
+
+    int resultado = kru();
+    printf("%d\n", resultado);
+
+    return 0;
+}
