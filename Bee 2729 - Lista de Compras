@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_ITENS 1000
+#define MAX_TAM 21
+
+void ordenar_remover_duplicados(char lista[MAX_ITENS][MAX_TAM], int n) {
+    char temp[MAX_TAM];
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (strcmp(lista[i], lista[j]) > 0) {
+                strcpy(temp, lista[i]);
+                strcpy(lista[i], lista[j]);
+                strcpy(lista[j], temp);
+            }
+        }
+    }
+    int nova_tam = 0;
+    for (int i = 0; i < n; i++) {
+        if (i == 0 || strcmp(lista[i], lista[i - 1]) != 0) {
+            strcpy(lista[nova_tam++], lista[i]);
+        }
+    }
+    lista[nova_tam][0] = '\0';
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    getchar();
+
+    for (int i = 0; i < n; i++) {
+        char linha[MAX_ITENS * MAX_TAM];
+        fgets(linha, sizeof(linha), stdin);
+
+        char lista[MAX_ITENS][MAX_TAM];
+        int num_itens = 0;
+        char *token = strtok(linha, " \n");
+
+        while (token != NULL) {
+            strcpy(lista[num_itens++], token);
+            token = strtok(NULL, " \n");
+        }
+
+        ordenar_remover_duplicados(lista, num_itens);
+
+        for (int j = 0; j < num_itens && lista[j][0] != '\0'; j++) {
+            if (j > 0) {
+                printf(" ");
+            }
+            printf("%s", lista[j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
