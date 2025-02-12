@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 1000
+
+typedef struct {
+    char pilha[MAX];
+    int topo;
+} Pilha;
+
+void inicializar(Pilha *p) {
+    p->topo = -1;
+}
+
+int esta_vazia(Pilha *p) {
+    return p->topo == -1;
+}
+
+int esta_cheia(Pilha *p) {
+    return p->topo == MAX - 1;
+}
+
+void empilhar(Pilha *p, char c) {
+    if (!esta_cheia(p)) {
+        p->pilha[++(p->topo)] = c;
+    }
+}
+
+char desempilhar(Pilha *p) {
+    if (!esta_vazia(p)) {
+        return p->pilha[(p->topo)--];
+    }
+    return '\0';
+}
+
+char topo(Pilha *p) {
+    if (!esta_vazia(p)) {
+        return p->pilha[p->topo];
+    }
+    return '\0';
+}
+
+int precedencia(char c) {
+    switch (c) {
+        case '^': return 3;
+        case '*':
+        case '/': return 2;
+        case '+':
+        case '-': return 1;
+        default: return 0;
+    }
+}
+
+int eh_operador(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+}
+
+int eh_operando(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
+}
+
+void infixo_para_posfixo(char* infixo, char* posfixo) {
+    Pilha p;
+    inicializar(&p);
+    int k = 0;
+    for (int i = 0; infixo[i] != '\0'; i++) {
+        if (eh_operando(infixo[i])) {
+            posfixo[k++] = infixo[i];
+        } else if (infixo[i] == '(') {
+            empilhar(&p, infixo[i]);
+        } else if (infixo[i] == ')') {
+            while (!esta_vazia(&p) && topo(&p) != '(') {
+                posfixo[k++] = desempilhar(&p);
+            }
+            desempilhar(&p);
+        } else if (eh_operador(infixo[i])) {
+            while (!esta_vazia(&p) && precedencia(topo(&p)) >= precedencia(infixo[i])) {
+                posfixo[k++] = desempilhar(&p);
+            }
+            empilhar(&p, infixo[i]);
+        }
+    }
+    while (!esta_vazia(&p)) {
+        posfixo[k++] = desempilhar(&p);
+    }
+    posfixo[k] = '\0';
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    getchar();
+
+    char infixo[MAX];
+    char posfixo[MAX];
+
+    for (int i = 0; i < n; i++) {
+        fgets(infixo, MAX, stdin);
+        infixo[strcspn(infixo, "\n")] = 0;
+        infixo_para_posfixo(infixo, posfixo);
+        printf("%s\n", posfixo);
+    }
+
+    return 0;
+}
