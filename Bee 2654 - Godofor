@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char nome[101];
+    int poder;
+    int matou;
+    int morreu;
+} Candidato;
+
+int comparar(const void *a, const void *b) {
+    Candidato *candidatoA = (Candidato *)a;
+    Candidato *candidatoB = (Candidato *)b;
+
+    if (candidatoA->poder != candidatoB->poder) {
+        return candidatoB->poder - candidatoA->poder;
+    }
+    if (candidatoA->matou != candidatoB->matou) {
+        return candidatoB->matou - candidatoA->matou;
+    }
+    if (candidatoA->morreu != candidatoB->morreu) {
+        return candidatoA->morreu - candidatoB->morreu;
+    }
+    return strcmp(candidatoA->nome, candidatoB->nome);
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+
+    Candidato candidatos[N];
+
+    for (int i = 0; i < N; i++) {
+        scanf("%s %d %d %d", candidatos[i].nome, &candidatos[i].poder, &candidatos[i].matou, &candidatos[i].morreu);
+    }
+
+    qsort(candidatos, N, sizeof(Candidato), comparar);
+
+    printf("%s\n", candidatos[0].nome);
+
+    return 0;
+}
