@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_CIDADES 40000
+#define MAX_CAMINHOS 50000
+
+typedef struct {
+    int origem, destino, peso;
+} Caminho;
+
+Caminho caminhos[MAX_CAMINHOS];
+int pai[MAX_CIDADES], rank[MAX_CIDADES];
+int M, N;
+
+int comparar(const void* a, const void* b) {
+    Caminho* caminhoA = (Caminho*)a;
+    Caminho* caminhoB = (Caminho*)b;
+    return caminhoA->peso - caminhoB->peso;
+}
+
+void inicializar_uf(int n) {
+    for (int i = 0; i < n; i++) {
+        pai[i] = i;
+        rank[i] = 0;
+    }
+}
+
+int encontrar(int x) {
+    if (pai[x] != x) {
+        pai[x] = encontrar(pai[x]);
+    }
+    return pai[x];
+}
+
+void unir(int x, int y) {
+    int raizX = encontrar(x);
+    int raizY = encontrar(y);
+    if (raizX != raizY) {
+        if (rank[raizX] > rank[raizY]) {
+            pai[raizY] = raizX;
+        } else if (rank[raizX] < rank[raizY]) {
+            pai[raizX] = raizY;
+        } else {
+            pai[raizY] = raizX;
+            rank[raizX]++;
+        }
+    }
+}
+
+int kru() {
+    qsort(caminhos, N, sizeof(Caminho), comparar);
+    inicializar_uf(M);
+
+    int soma = 0;
+    for (int i = 0; i < N; i++) {
+        int origem = caminhos[i].origem;
+        int destino = caminhos[i].destino;
+        int peso = caminhos[i].peso;
+        if (encontrar(origem) != encontrar(destino)) {
+            unir(origem, destino);
+            soma += peso;
+        }
+    }
+    return soma;
+}
+
+int main() {
+    while (scanf("%d %d", &M, &N) && (M != 0 || N != 0)) {
+        for (int i = 0; i < N; i++) {
+            scanf("%d %d %d", &caminhos[i].origem, &caminhos[i].destino, &caminhos[i].peso);
+        }
+        int resultado = kru();
+        printf("%d\n", resultado);
+    }
+    return 0;
+}
