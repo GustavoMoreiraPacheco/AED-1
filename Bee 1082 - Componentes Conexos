@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_VERTICES 26
+
+typedef struct {
+    int lista_adj[MAX_VERTICES][MAX_VERTICES];
+    int visitados[MAX_VERTICES];
+    int V, E;
+} Grafo;
+
+void inicializar_grafo(Grafo *g, int V, int E) {
+    g->V = V;
+    g->E = E;
+    memset(g->lista_adj, 0, sizeof(g->lista_adj));
+    memset(g->visitados, 0, sizeof(g->visitados));
+}
+
+void adicionar_aresta(Grafo *g, int u, int v) {
+    g->lista_adj[u][v] = 1;
+    g->lista_adj[v][u] = 1;
+}
+
+void dfs(Grafo *g, int v, char *componente) {
+    g->visitados[v] = 1;
+    componente[strlen(componente)] = v + 'a';
+    for (int u = 0; u < g->V; u++) {
+        if (g->lista_adj[v][u] && !g->visitados[u]) {
+            dfs(g, u, componente);
+        }
+    }
+}
+
+int comparar(const void *a, const void *b) {
+    return (*(char *)a - *(char *)b);
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+
+    for (int caso = 1; caso <= N; caso++) {
+        int V, E;
+        scanf("%d %d", &V, &E);
+
+        Grafo grafo;
+        inicializar_grafo(&grafo, V, E);
+
+        for (int i = 0; i < E; i++) {
+            char u, v;
+            scanf(" %c %c", &u, &v);
+            adicionar_aresta(&grafo, u - 'a', v - 'a');
+        }
+
+        printf("Case #%d:\n", caso);
+        int componentes = 0;
+
+        for (int v = 0; v < V; v++) {
+            if (!grafo.visitados[v]) {
+                char componente[MAX_VERTICES + 1] = {0};
+                dfs(&grafo, v, componente);
+                qsort(componente, strlen(componente), sizeof(char), comparar);
+                for (int i = 0; i < strlen(componente); i++) {
+                    printf("%c,", componente[i]);
+                }
+                printf("\n");
+                componentes++;
+            }
+        }
+
+        printf("%d connected components\n", componentes);
+        printf("\n");
+    }
+
+    return 0;
+}
