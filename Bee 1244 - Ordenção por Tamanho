@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRINGS 50
+#define MAX_LENGTH 51
+
+void ordenar_por_tamanho(char *strings[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (strlen(strings[j]) < strlen(strings[j + 1])) {
+                char *temp = strings[j];
+                strings[j] = strings[j + 1];
+                strings[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+    getchar();
+
+    for (int i = 0; i < N; i++) {
+        char linha[MAX_STRINGS * MAX_LENGTH];
+        fgets(linha, sizeof(linha), stdin);
+
+        char *strings[MAX_STRINGS];
+        int quantidade_strings = 0;
+        char *token = strtok(linha, " \n");
+
+        while (token != NULL) {
+            strings[quantidade_strings++] = token;
+            token = strtok(NULL, " \n");
+        }
+
+        ordenar_por_tamanho(strings, quantidade_strings);
+
+        for (int j = 0; j < quantidade_strings; j++) {
+            printf("%s", strings[j]);
+            if (j < quantidade_strings - 1) {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
