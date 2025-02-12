@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+void contar_trocas(int trem[], int L) {
+    int trocas = 0;
+    for (int i = 0; i < L - 1; i++) {
+        for (int j = 0; j < L - 1 - i; j++) {
+            if (trem[j] > trem[j + 1]) {
+                int temp = trem[j];
+                trem[j] = trem[j + 1];
+                trem[j + 1] = temp;
+                trocas++;
+            }
+        }
+    }
+    printf("Optimal train swapping takes %d swaps.\n", trocas);
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+
+    while (N--) {
+        int L;
+        scanf("%d", &L);
+
+        int trem[L];
+        for (int i = 0; i < L; i++) {
+            scanf("%d", &trem[i]);
+        }
+
+        contar_trocas(trem, L);
+    }
+
+    return 0;
+}
