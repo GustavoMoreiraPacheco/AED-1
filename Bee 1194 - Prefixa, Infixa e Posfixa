@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 52
+
+int procurar_indice(char *str, char ch, int inicio, int fim) {
+    for (int i = inicio; i <= fim; i++) {
+        if (str[i] == ch) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void construir_posfixa(char *prefixo, char *infixo, int inicio, int fim, int *indice_atual) {
+    if (inicio > fim) {
+        return;
+    }
+
+    int indice_raiz = procurar_indice(infixo, prefixo[*indice_atual], inicio, fim);
+    (*indice_atual)++;
+
+    construir_posfixa(prefixo, infixo, inicio, indice_raiz - 1, indice_atual);
+    construir_posfixa(prefixo, infixo, indice_raiz + 1, fim, indice_atual);
+
+    printf("%c", infixo[indice_raiz]);
+}
+
+int main() {
+    int C;
+    scanf("%d", &C);
+
+    for (int i = 0; i < C; i++) {
+        int N;
+        char prefixo[MAX + 1], infixo[MAX + 1];
+        scanf("%d %s %s", &N, prefixo, infixo);
+
+        int indice_atual = 0;
+        construir_posfixa(prefixo, infixo, 0, N - 1, &indice_atual);
+        printf("\n");
+    }
+
+    return 0;
+}
