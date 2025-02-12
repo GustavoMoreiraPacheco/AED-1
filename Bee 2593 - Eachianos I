@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_TEXTO 10000
+#define MAX_PALAVRAS 128
+#define MAX_COMPRIMENTO 50
+
+int main() {
+    char texto[MAX_TEXTO + 1];
+    int quantidade_palavras;
+    char palavras[MAX_PALAVRAS][MAX_COMPRIMENTO + 1];
+
+    fgets(texto, MAX_TEXTO + 1, stdin);
+    texto[strcspn(texto, "\n")] = 0;
+
+    scanf("%d", &quantidade_palavras);
+    getchar();
+
+    for (int i = 0; i < quantidade_palavras; i++) {
+        scanf("%s", palavras[i]);
+    }
+
+    for (int i = 0; i < quantidade_palavras; i++) {
+        char *palavra = palavras[i];
+        int comprimento_palavra = strlen(palavra);
+        int encontrado = 0;
+
+        for (int j = 0; j <= strlen(texto) - comprimento_palavra; j++) {
+            if (j == 0 || texto[j - 1] == ' ') {
+                if (strncmp(&texto[j], palavra, comprimento_palavra) == 0 &&
+                    (texto[j + comprimento_palavra] == ' ' || texto[j + comprimento_palavra] == '\0')) {
+                    if (encontrado) {
+                        printf(" ");
+                    }
+                    printf("%d", j);
+                    encontrado = 1;
+                }
+            }
+        }
+
+        if (!encontrado) {
+            printf("-1");
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
