@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int nota;
+    int posicao_original;
+} Aluno;
+
+int comparar(const void *a, const void *b) {
+    Aluno *alunoA = (Aluno *)a;
+    Aluno *alunoB = (Aluno *)b;
+    if (alunoA->nota == alunoB->nota) {
+        return alunoA->posicao_original - alunoB->posicao_original;
+    }
+    return alunoB->nota - alunoA->nota;
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+    
+    while (N--) {
+        int M;
+        scanf("%d", &M);
+        
+        Aluno alunos[M];
+        for (int i = 0; i < M; i++) {
+            scanf("%d", &alunos[i].nota);
+            alunos[i].posicao_original = i;
+        }
+        
+        qsort(alunos, M, sizeof(Aluno), comparar);
+        
+        int inalterados = 0;
+        for (int i = 0; i < M; i++) {
+            if (alunos[i].posicao_original == i) {
+                inalterados++;
+            }
+        }
+        
+        printf("%d\n", inalterados);
+    }
+
+    return 0;
+}
