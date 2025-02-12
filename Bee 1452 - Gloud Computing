@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SERVIDORES 200
+#define MAX_CLIENTES 200
+#define MAX_APPS 100
+
+typedef struct {
+    int qtd_aplicacoes;
+    char aplicacoes[MAX_APPS][21];
+} Servidor;
+
+typedef struct {
+    int qtd_aplicacoes;
+    char aplicacoes[MAX_APPS][21];
+} Cliente;
+
+Servidor servidores[MAX_SERVIDORES];
+Cliente clientes[MAX_CLIENTES];
+
+int main() {
+    int N, M;
+
+    while (scanf("%d %d", &N, &M) && (N != 0 || M != 0)) {
+        for (int i = 0; i < N; i++) {
+            scanf("%d", &servidores[i].qtd_aplicacoes);
+            for (int j = 0; j < servidores[i].qtd_aplicacoes; j++) {
+                scanf("%s", servidores[i].aplicacoes[j]);
+            }
+        }
+
+        for (int i = 0; i < M; i++) {
+            scanf("%d", &clientes[i].qtd_aplicacoes);
+            for (int j = 0; j < clientes[i].qtd_aplicacoes; j++) {
+                scanf("%s", clientes[i].aplicacoes[j]);
+            }
+        }
+
+        int total_conexoes = 0;
+
+        for (int i = 0; i < M; i++) {
+            int conexoes_servidor[MAX_SERVIDORES] = {0};
+
+            for (int j = 0; j < clientes[i].qtd_aplicacoes; j++) {
+                for (int k = 0; k < N; k++) {
+                    for (int l = 0; l < servidores[k].qtd_aplicacoes; l++) {
+                        if (strcmp(clientes[i].aplicacoes[j], servidores[k].aplicacoes[l]) == 0) {
+                            conexoes_servidor[k] = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (int k = 0; k < N; k++) {
+                if (conexoes_servidor[k] == 1) {
+                    total_conexoes++;
+                }
+            }
+        }
+
+        printf("%d\n", total_conexoes);
+    }
+
+    return 0;
+}
