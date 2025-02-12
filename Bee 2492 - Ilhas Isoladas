@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char origem[31];
+    char destino[31];
+} Conexao;
+
+int main() {
+    int T;
+    while (scanf("%d", &T) && T != 0) {
+        Conexao conexoes[T];
+        char origem[31], seta[3], destino[31];
+
+        for (int i = 0; i < T; i++) {
+            scanf("%s %s %s", origem, seta, destino);
+            strcpy(conexoes[i].origem, origem);
+            strcpy(conexoes[i].destino, destino);
+        }
+
+        int eh_funcao = 1;
+        for (int i = 0; i < T; i++) {
+            for (int j = i + 1; j < T; j++) {
+                if (strcmp(conexoes[i].origem, conexoes[j].origem) == 0 && strcmp(conexoes[i].destino, conexoes[j].destino) != 0) {
+                    eh_funcao = 0;
+                    break;
+                }
+            }
+            if (!eh_funcao) break;
+        }
+
+        if (!eh_funcao) {
+            printf("Not a function.\n");
+            continue;
+        }
+
+        int eh_invertivel = 1;
+        for (int i = 0; i < T; i++) {
+            for (int j = i + 1; j < T; j++) {
+                if (strcmp(conexoes[i].destino, conexoes[j].destino) == 0) {
+                    eh_invertivel = 0;
+                    break;
+                }
+            }
+            if (!eh_invertivel) break;
+        }
+
+        if (eh_invertivel) {
+            printf("Invertible.\n");
+        } else {
+            printf("Not invertible.\n");
+        }
+    }
+
+    return 0;
+}
