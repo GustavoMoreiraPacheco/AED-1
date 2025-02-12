@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+#define MAX 1000
+#define INF INT_MAX
+
+typedef struct {
+    int destino, peso;
+} Aresta;
+
+typedef struct {
+    Aresta arestas[MAX];
+    int tamanho;
+} ListaAdj;
+
+ListaAdj grafo[MAX];
+int dist[MAX];
+int visitado[MAX];
+int N, M;
+
+void inicializar_grafo() {
+    for (int i = 0; i < N; i++) {
+        grafo[i].tamanho = 0;
+        dist[i] = INF;
+        visitado[i] = 0;
+    }
+}
+
+void adicionar_aresta(int origem, int destino, int peso) {
+    grafo[origem].arestas[grafo[origem].tamanho].destino = destino;
+    grafo[origem].arestas[grafo[origem].tamanho].peso = peso;
+    grafo[origem].tamanho++;
+}
+
+void dij(int origem, int ignorar) {
+    dist[origem] = 0;
+
+    for (int i = 0; i < N; i++) {
+        int u = -1;
+        for (int j = 0; j < N; j++) {
+            if (!visitado[j] && (u == -1 || dist[j] < dist[u])) {
+                u = j;
+            }
+        }
+
+        if (dist[u] == INF) {
+            break;
+        }
+
+        visitado[u] = 1;
+
+        for (int j = 0; j < grafo[u].tamanho; j++) {
+            int v = grafo[u].arestas[j].destino;
+            int peso = grafo[u].arestas[j].peso;
+
+            if (v != ignorar && dist[u] + peso < dist[v]) {
+                dist[v] = dist[u] + peso;
+            }
+        }
+    }
+}
+
+int main() {
+    while (scanf("%d %d", &N, &M) != EOF) {
+        inicializar_grafo();
+
+        for (int i = 0; i < M; i++) {
+            int A, B;
+            scanf("%d %d", &A, &B);
+            adicionar_aresta(A - 1, B - 1, 1);
+            adicionar_aresta(B - 1, A - 1, 1);
+        }
+
+        int C, R, E;
+        scanf("%d %d %d", &C, &R, &E);
+        C--; R--; E--;
+
+        dij(C, E);
+
+        printf("%d\n", dist[R]);
+    }
+
+    return 0;
+}
