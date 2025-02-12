@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Nodo {
+    int valor;
+    struct Nodo *esquerda, *direita;
+} Nodo;
+
+Nodo* criar_nodo(int valor) {
+    Nodo* novo_nodo = (Nodo*) malloc(sizeof(Nodo));
+    novo_nodo->valor = valor;
+    novo_nodo->esquerda = NULL;
+    novo_nodo->direita = NULL;
+    return novo_nodo;
+}
+
+Nodo* inserir(Nodo* raiz, int valor) {
+    if (raiz == NULL) {
+        return criar_nodo(valor);
+    }
+    if (valor < raiz->valor) {
+        raiz->esquerda = inserir(raiz->esquerda, valor);
+    } else {
+        raiz->direita = inserir(raiz->direita, valor);
+    }
+    return raiz;
+}
+
+void percorrer_por_nivel(Nodo* raiz) {
+    if (raiz == NULL) return;
+
+    Nodo* fila[500];
+    int inicio = 0, fim = 0;
+    fila[fim++] = raiz;
+
+    while (inicio < fim) {
+        Nodo* atual = fila[inicio++];
+        printf("%d", atual->valor);
+
+        if (atual->esquerda != NULL) {
+            fila[fim++] = atual->esquerda;
+        }
+        if (atual->direita != NULL) {
+            fila[fim++] = atual->direita;
+        }
+        
+        if (inicio < fim) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int C;
+    scanf("%d", &C);
+
+    for (int caso = 1; caso <= C; caso++) {
+        int N;
+        scanf("%d", &N);
+
+        Nodo* raiz = NULL;
+        for (int i = 0; i < N; i++) {
+            int valor;
+            scanf("%d", &valor);
+            raiz = inserir(raiz, valor);
+        }
+
+        printf("Case %d:\n", caso);
+        percorrer_por_nivel(raiz);
+        printf("\n");
+
+        free(raiz);
+    }
+
+    return 0;
+}
