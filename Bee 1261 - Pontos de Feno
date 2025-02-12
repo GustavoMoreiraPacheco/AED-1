@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_PALAVRAS 1000
+#define MAX_DESC_FUNCAO 100
+#define MAX_LEN_PALAVRA 17
+#define MAX_LEN_DESC 10000
+
+typedef struct {
+    char palavra[MAX_LEN_PALAVRA];
+    int valor;
+} HayPoint;
+
+HayPoint dic[MAX_PALAVRAS];
+int m, n;
+
+int encontrarValorPalavra(char *palavra) {
+    for (int i = 0; i < m; i++) {
+        if (strcmp(dic[i].palavra, palavra) == 0) {
+            return dic[i].valor;
+        }
+    }
+    return 0;
+}
+
+int calcularSalario(char *descricao) {
+    char *token;
+    int salario = 0;
+    token = strtok(descricao, " ");
+    while (token != NULL) {
+        salario += encontrarValorPalavra(token);
+        token = strtok(NULL, " ");
+    }
+    return salario;
+}
+
+int main() {
+    scanf("%d %d", &m, &n);
+    for (int i = 0; i < m; i++) {
+        scanf("%s %d", dic[i].palavra, &dic[i].valor);
+    }
+
+    char descricao[MAX_LEN_DESC];
+    for (int i = 0; i < n; i++) {
+        int salario = 0;
+        while (fgets(descricao, sizeof(descricao), stdin)) {
+            if (descricao[0] == '.') break;
+            descricao[strcspn(descricao, "\n")] = 0;
+            salario += calcularSalario(descricao);
+        }
+        printf("%d\n", salario);
+    }
+
+    return 0;
+}
