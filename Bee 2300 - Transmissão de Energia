@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 100
+
+int adj[MAX][MAX];
+int visitado[MAX];
+int E, L;
+
+void dfs(int v) {
+    visitado[v] = 1;
+    for (int u = 0; u < E; u++) {
+        if (adj[v][u] && !visitado[u]) {
+            dfs(u);
+        }
+    }
+}
+
+int main() {
+    int teste = 1;
+
+    while (scanf("%d %d", &E, &L) && (E != 0 || L != 0)) {
+        memset(adj, 0, sizeof(adj));
+        memset(visitado, 0, sizeof(visitado));
+
+        for (int i = 0; i < L; i++) {
+            int X, Y;
+            scanf("%d %d", &X, &Y);
+            adj[X-1][Y-1] = 1;
+            adj[Y-1][X-1] = 1;
+        }
+
+        dfs(0);
+
+        int estado = 1;
+        for (int i = 0; i < E; i++) {
+            if (!visitado[i]) {
+                estado = 0;
+                break;
+            }
+        }
+
+        printf("Teste %d\n", teste++);
+        if (estado) {
+            printf("normal\n");
+        } else {
+            printf("falha\n");
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
