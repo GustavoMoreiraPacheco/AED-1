@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define SIZE 8
+
+int dx[] = {1, 1, 2, 2, -1, -1, -2, -2};
+int dy[] = {2, -2, 1, -1, 2, -2, 1, -1};
+
+typedef struct {
+    int x, y;
+    int dist;
+} Node;
+
+int esta_no_tabuleiro(int x, int y) {
+    return (x >= 0 && x < SIZE && y >= 0 && y < SIZE);
+}
+
+int bfs(char* inicio, char* fim) {
+    int inicioX = inicio[0] - 'a';
+    int inicioY = inicio[1] - '1';
+    int fimX = fim[0] - 'a';
+    int fimY = fim[1] - '1';
+
+    int visitado[SIZE][SIZE];
+    memset(visitado, 0, sizeof(visitado));
+
+    Node fila[SIZE * SIZE];
+    int frente = 0, tras = 0;
+
+    fila[tras].x = inicioX;
+    fila[tras].y = inicioY;
+    fila[tras].dist = 0;
+    tras++;
+    visitado[inicioX][inicioY] = 1;
+
+    while (frente < tras) {
+        Node no = fila[frente++];
+        if (no.x == fimX && no.y == fimY) {
+            return no.dist;
+        }
+
+        for (int i = 0; i < 8; i++) {
+            int x = no.x + dx[i];
+            int y = no.y + dy[i];
+
+            if (esta_no_tabuleiro(x, y) && !visitado[x][y]) {
+                fila[tras].x = x;
+                fila[tras].y = y;
+                fila[tras].dist = no.dist + 1;
+                tras++;
+                visitado[x][y] = 1;
+            }
+        }
+    }
+
+    return -1;
+}
+
+int main() {
+    char inicio[3], fim[3];
+    while (scanf("%s %s", inicio, fim) != EOF) {
+        int movimentos = bfs(inicio, fim);
+        printf("To get from %s to %s takes %d knight moves.\n", inicio, fim, movimentos);
+    }
+    return 0;
+}
