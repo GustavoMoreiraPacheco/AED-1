@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char nome[21];
+    int habilidade;
+} Aluno;
+
+int comparar(const void *a, const void *b) {
+    Aluno *alunoA = (Aluno *)a;
+    Aluno *alunoB = (Aluno *)b;
+    return alunoB->habilidade - alunoA->habilidade;
+}
+
+int comparar_nomes(const void *a, const void *b) {
+    return strcmp(*(const char **)a, *(const char **)b);
+}
+
+int main() {
+    int N, T;
+    scanf("%d %d", &N, &T);
+
+    Aluno *alunos = (Aluno *)malloc(N * sizeof(Aluno));
+    for (int i = 0; i < N; i++) {
+        scanf("%s %d", alunos[i].nome, &alunos[i].habilidade);
+    }
+
+    qsort(alunos, N, sizeof(Aluno), comparar);
+
+    char ***times = (char ***)malloc(T * sizeof(char **));
+    int *tam_times = (int *)calloc(T, sizeof(int));
+    for (int i = 0; i < T; i++) {
+        times[i] = (char **)malloc(N * sizeof(char *));
+    }
+
+    for (int i = 0; i < N; i++) {
+        int time_idx = i % T;
+        times[time_idx][tam_times[time_idx]] = alunos[i].nome;
+        tam_times[time_idx]++;
+    }
+
+    for (int i = 0; i < T; i++) {
+        qsort(times[i], tam_times[i], sizeof(char *), comparar_nomes);
+    }
+
+    for (int i = 0; i < T; i++) {
+        printf("Time %d\n", i + 1);
+        for (int j = 0; j < tam_times[i]; j++) {
+            printf("%s\n", times[i][j]);
+        }
+        printf("\n");
+    }
+
+    free(alunos);
+    for (int i = 0; i < T; i++) {
+        free(times[i]);
+    }
+    free(times);
+    free(tam_times);
+
+    return 0;
+}
