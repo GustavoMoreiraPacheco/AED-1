@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_TAM 11
+
+int comparar(const void *a, const void *b) {
+    return strcmp((char *)a, (char *)b);
+}
+
+void permutacoes(char *str, int esquerda, int direita, char resultado[][MAX_TAM], int *contador) {
+    if (esquerda == direita) {
+        strcpy(resultado[(*contador)++], str);
+    } else {
+        for (int i = esquerda; i <= direita; i++) {
+            char temp = str[esquerda];
+            str[esquerda] = str[i];
+            str[i] = temp;
+
+            permutacoes(str, esquerda + 1, direita, resultado, contador);
+
+            temp = str[esquerda];
+            str[esquerda] = str[i];
+            str[i] = temp;
+        }
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        char str[MAX_TAM];
+        scanf("%s", str);
+        
+        char resultado[362880][MAX_TAM]; // 10! = 362880 no máximo
+        int contador = 0;
+
+        permutacoes(str, 0, strlen(str) - 1, resultado, &contador);
+
+        qsort(resultado, contador, MAX_TAM, comparar);
+
+        for (int j = 0; j < contador; j++) {
+            if (j == 0 || strcmp(resultado[j], resultado[j - 1]) != 0) {
+                printf("%s\n", resultado[j]);
+            }
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}
