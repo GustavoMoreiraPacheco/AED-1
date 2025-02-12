@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 1000
+
+typedef struct {
+    int dados[MAX];
+    int topo;
+} Pilha;
+
+typedef struct {
+    int dados[MAX];
+    int frente, tras;
+} Fila;
+
+typedef struct {
+    int dados[MAX];
+    int tamanho;
+} FilaPrioridade;
+
+void inicializar_pilha(Pilha *p) {
+    p->topo = -1;
+}
+
+void empilhar(Pilha *p, int valor) {
+    if (p->topo < MAX - 1) {
+        p->dados[++(p->topo)] = valor;
+    }
+}
+
+int desempilhar(Pilha *p) {
+    if (p->topo >= 0) {
+        return p->dados[(p->topo)--];
+    }
+    return -1;
+}
+
+void inicializar_fila(Fila *f) {
+    f->frente = 0;
+    f->tras = 0;
+}
+
+void enfileirar(Fila *f, int valor) {
+    if (f->tras < MAX) {
+        f->dados[f->tras++] = valor;
+    }
+}
+
+int desenfileirar(Fila *f) {
+    if (f->frente < f->tras) {
+        return f->dados[f->frente++];
+    }
+    return -1;
+}
+
+void inicializar_fila_prioridade(FilaPrioridade *fp) {
+    fp->tamanho = 0;
+}
+
+void inserir_prioridade(FilaPrioridade *fp, int valor) {
+    if (fp->tamanho < MAX) {
+        fp->dados[fp->tamanho++] = valor;
+        int i = fp->tamanho - 1;
+        while (i > 0 && fp->dados[i] > fp->dados[(i - 1) / 2]) {
+            int temp = fp->dados[i];
+            fp->dados[i] = fp->dados[(i - 1) / 2];
+            fp->dados[(i - 1) / 2] = temp;
+            i = (i - 1) / 2;
+        }
+    }
+}
+
+int remover_prioridade(FilaPrioridade *fp) {
+    if (fp->tamanho > 0) {
+        int raiz = fp->dados[0];
+        fp->dados[0] = fp->dados[--(fp->tamanho)];
+        int i = 0;
+        while (2 * i + 1 < fp->tamanho) {
+            int filho_esq = 2 * i + 1;
+            int filho_dir = 2 * i + 2;
+            int maior = filho_esq;
+            if (filho_dir < fp->tamanho && fp->dados[filho_dir] > fp->dados[filho_esq]) {
+                maior = filho_dir;
+            }
+            if (fp->dados[i] >= fp->dados[maior]) break;
+            int temp = fp->dados[i];
+            fp->dados[i] = fp->dados[maior];
+            fp->dados[maior] = temp;
+            i = maior;
+        }
+        return raiz;
+    }
+    return -1;
+}
+
+int main() {
+    int n;
+    while (scanf("%d", &n) != EOF) {
+        Pilha pilha;
+        Fila fila;
+        FilaPrioridade fila_prioridade;
+        inicializar_pilha(&pilha);
+        inicializar_fila(&fila);
+        inicializar_fila_prioridade(&fila_prioridade);
+
+        int is_stack = 1, is_queue = 1, is_priority_queue = 1;
+
+        for (int i = 0; i < n; i++) {
+            int tipo, valor;
+            scanf("%d", &tipo);
+            if (tipo == 1) {
+                scanf("%d", &valor);
+                if (is_stack) empilhar(&pilha, valor);
+                if (is_queue) enfileirar(&fila, valor);
+                if (is_priority_queue) inserir_prioridade(&fila_prioridade, valor);
+            } else if (tipo == 2) {
+                scanf("%d", &valor);
+                if (is_stack && desempilhar(&pilha) != valor) is_stack = 0;
+                if (is_queue && desenfileirar(&fila) != valor) is_queue = 0;
+                if (is_priority_queue && remover_prioridade(&fila_prioridade) != valor) is_priority_queue = 0;
+            }
+        }
+
+        if (is_stack + is_queue + is_priority_queue > 1) {
+            printf("not sure\n");
+        } else if (is_stack) {
+            printf("stack\n");
+        } else if (is_queue) {
+            printf("queue\n");
+        } else if (is_priority_queue) {
+            printf("priority queue\n");
+        } else {
+            printf("impossible\n");
+        }
+    }
+    return 0;
+}
