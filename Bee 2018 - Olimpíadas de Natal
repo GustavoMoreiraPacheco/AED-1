@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char pais[31];
+    int ouro;
+    int prata;
+    int bronze;
+} Pais;
+
+int comparar(const void *a, const void *b) {
+    Pais *paisA = (Pais *)a;
+    Pais *paisB = (Pais *)b;
+
+    if (paisA->ouro != paisB->ouro) {
+        return paisB->ouro - paisA->ouro;
+    } else if (paisA->prata != paisB->prata) {
+        return paisB->prata - paisA->prata;
+    } else if (paisA->bronze != paisB->bronze) {
+        return paisB->bronze - paisA->bronze;
+    } else {
+        return strcmp(paisA->pais, paisB->pais);
+    }
+}
+
+int main() {
+    Pais paises[300];
+    int num_paises = 0;
+    char descricao[101], pais_ouro[31], pais_prata[31], pais_bronze[31];
+
+    while (scanf("%100[^\n]\n%30[^\n]\n%30[^\n]\n%30[^\n]\n", descricao, pais_ouro, pais_prata, pais_bronze) == 4) {
+        int encontrou = 0;
+        for (int i = 0; i < num_paises; i++) {
+            if (strcmp(paises[i].pais, pais_ouro) == 0) {
+                paises[i].ouro++;
+                encontrou = 1;
+                break;
+            }
+        }
+        if (!encontrou) {
+            strcpy(paises[num_paises].pais, pais_ouro);
+            paises[num_paises].ouro = 1;
+            paises[num_paises].prata = 0;
+            paises[num_paises].bronze = 0;
+            num_paises++;
+        }
+
+        encontrou = 0;
+        for (int i = 0; i < num_paises; i++) {
+            if (strcmp(paises[i].pais, pais_prata) == 0) {
+                paises[i].prata++;
+                encontrou = 1;
+                break;
+            }
+        }
+        if (!encontrou) {
+            strcpy(paises[num_paises].pais, pais_prata);
+            paises[num_paises].ouro = 0;
+            paises[num_paises].prata = 1;
+            paises[num_paises].bronze = 0;
+            num_paises++;
+        }
+
+        encontrou = 0;
+        for (int i = 0; i < num_paises; i++) {
+            if (strcmp(paises[i].pais, pais_bronze) == 0) {
+                paises[i].bronze++;
+                encontrou = 1;
+                break;
+            }
+        }
+        if (!encontrou) {
+            strcpy(paises[num_paises].pais, pais_bronze);
+            paises[num_paises].ouro = 0;
+            paises[num_paises].prata = 0;
+            paises[num_paises].bronze = 1;
+            num_paises++;
+        }
+    }
+
+    qsort(paises, num_paises, sizeof(Pais), comparar);
+
+    printf("Quadro de Medalhas\n");
+    for (int i = 0; i < num_paises; i++) {
+        printf("%s %d %d %d\n", paises[i].pais, paises[i].ouro, paises[i].prata, paises[i].bronze);
+    }
+
+    return 0;
+}
