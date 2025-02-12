@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char nome[61];
+    char cor[10];
+    char tamanho;
+} Camiseta;
+
+int comparar(const void *a, const void *b) {
+    Camiseta *camiseta1 = (Camiseta *)a;
+    Camiseta *camiseta2 = (Camiseta *)b;
+
+    int cor_cmp = strcmp(camiseta1->cor, camiseta2->cor);
+    if (cor_cmp != 0) {
+        return cor_cmp;
+    }
+
+    if (camiseta1->tamanho != camiseta2->tamanho) {
+        return camiseta2->tamanho - camiseta1->tamanho;
+    }
+
+    return strcmp(camiseta1->nome, camiseta2->nome);
+}
+
+int main() {
+    int N;
+    int primeiro = 1;
+    while (scanf("%d", &N) && N != 0) {
+        if (!primeiro) {
+            printf("\n");
+        }
+        primeiro = 0;
+
+        Camiseta camisetas[N];
+
+        for (int i = 0; i < N; i++) {
+            getchar();
+            fgets(camisetas[i].nome, 61, stdin);
+            camisetas[i].nome[strcspn(camisetas[i].nome, "\n")] = '\0'; // Remover '\n'
+            scanf("%s %c", camisetas[i].cor, &camisetas[i].tamanho);
+        }
+
+        qsort(camisetas, N, sizeof(Camiseta), comparar);
+
+        for (int i = 0; i < N; i++) {
+            printf("%s %c %s\n", camisetas[i].cor, camisetas[i].tamanho, camisetas[i].nome);
+        }
+    }
+
+    return 0;
+}
