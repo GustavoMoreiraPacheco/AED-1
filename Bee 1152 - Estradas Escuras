@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_ARESTAS 200000
+
+typedef struct {
+    int u, v, custo;
+} Aresta;
+
+int pai[MAX_ARESTAS], rank[MAX_ARESTAS];
+
+void inicializar_union_find(int n) {
+    for (int i = 0; i < n; i++) {
+        pai[i] = i;
+        rank[i] = 0;
+    }
+}
+
+int encontrar(int u) {
+    if (u != pai[u]) {
+        pai[u] = encontrar(pai[u]);
+    }
+    return pai[u];
+}
+
+void unir(int u, int v) {
+    int raiz_u = encontrar(u);
+    int raiz_v = encontrar(v);
+    if (raiz_u != raiz_v) {
+        if (rank[raiz_u] > rank[raiz_v]) {
+            pai[raiz_v] = raiz_u;
+        } else {
+            pai[raiz_u] = raiz_v;
+            if (rank[raiz_u] == rank[raiz_v]) {
+                rank[raiz_v]++;
+            }
+        }
+    }
+}
+
+int comparar_arestas(const void *a, const void *b) {
+    return ((Aresta *)a)->custo - ((Aresta *)b)->custo;
+}
+
+int main() {
+    int m, n;
+    while (scanf("%d %d", &m, &n) && (m != 0 || n != 0)) {
+        Aresta arestas[MAX_ARESTAS];
+        int custo_total = 0;
+        for (int i = 0; i < n; i++) {
+            scanf("%d %d %d", &arestas[i].u, &arestas[i].v, &arestas[i].custo);
+            custo_total += arestas[i].custo;
+        }
+        
+        qsort(arestas, n, sizeof(Aresta), comparar_arestas);
+
+        inicializar_union_find(m);
+        
+        int custo_mst = 0;
+        for (int i = 0; i < n; i++) {
+            if (encontrar(arestas[i].u) != encontrar(arestas[i].v)) {
+                unir(arestas[i].u, arestas[i].v);
+                custo_mst += arestas[i].custo;
+            }
+        }
+
+        printf("%d\n", custo_total - custo_mst);
+    }
+
+    return 0;
+}
