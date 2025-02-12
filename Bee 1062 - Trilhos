@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_VAGOES 1000
+
+bool verificar_permutacao(int N, int permutacao[]) {
+    int pilha[MAX_VAGOES];
+    int topo = 0; 
+    int v = 1; 
+
+    for (int i = 0; i < N; i++) {
+        while (v <= permutacao[i]) {
+            pilha[topo++] = v++;
+        }
+        if (pilha[--topo] != permutacao[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    int N;
+
+    while (scanf("%d", &N) && N != 0) {
+        int permutacao[MAX_VAGOES];
+
+        while (true) {
+            scanf("%d", &permutacao[0]);
+            if (permutacao[0] == 0) break;
+
+            for (int i = 1; i < N; i++) {
+                scanf("%d", &permutacao[i]);
+            }
+
+            if (verificar_permutacao(N, permutacao)) {
+                printf("Yes\n");
+            } else {
+                printf("No\n");
+            }
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}
