@@ -1,0 +1,59 @@
+#include <stdio.h>
+
+#define MAX 100001
+
+int pai[MAX];
+int rank[MAX];
+
+void inicializar_conjuntos(int n) {
+    for (int i = 1; i <= n; i++) {
+        pai[i] = i;
+        rank[i] = 0;
+    }
+}
+
+int encontrar(int x) {
+    if (pai[x] != x) {
+        pai[x] = encontrar(pai[x]);  // Compressão de caminho
+    }
+    return pai[x];
+}
+
+void unir_conjuntos(int x, int y) {
+    int raizX = encontrar(x);
+    int raizY = encontrar(y);
+    if (raizX != raizY) {
+        if (rank[raizX] > rank[raizY]) {
+            pai[raizY] = raizX;
+        } else if (rank[raizX] < rank[raizY]) {
+            pai[raizX] = raizY;
+        } else {
+            pai[raizY] = raizX;
+            rank[raizX]++;
+        }
+    }
+}
+
+int main() {
+    int N, K;
+    scanf("%d %d", &N, &K);
+
+    inicializar_conjuntos(N);
+
+    char operacao;
+    int banco1, banco2;
+    for (int i = 0; i < K; i++) {
+        scanf(" %c %d %d", &operacao, &banco1, &banco2);
+        if (operacao == 'F') {
+            unir_conjuntos(banco1, banco2);
+        } else if (operacao == 'C') {
+            if (encontrar(banco1) == encontrar(banco2)) {
+                printf("S\n");
+            } else {
+                printf("N\n");
+            }
+        }
+    }
+
+    return 0;
+}
