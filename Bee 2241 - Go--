@@ -1,0 +1,71 @@
+#include <stdio.h>
+
+#define MAX_N 500
+
+int tabuleiro[MAX_N + 1][MAX_N + 1];
+int soma_pretas[MAX_N + 1][MAX_N + 1];
+int soma_brancas[MAX_N + 1][MAX_N + 1];
+
+void preencher_somas(int N) {
+    for (int i = 1; i <= N; i++) {
+        for (int j = 1; j <= N; j++) {
+            soma_pretas[i][j] = soma_pretas[i - 1][j] + soma_pretas[i][j - 1] - soma_pretas[i - 1][j - 1] + (tabuleiro[i][j] == 1);
+            soma_brancas[i][j] = soma_brancas[i - 1][j] + soma_brancas[i][j - 1] - soma_brancas[i - 1][j - 1] + (tabuleiro[i][j] == 2);
+        }
+    }
+}
+
+int contar_areas(int N, int P, int C) {
+    int contador = 0;
+    for (int tamanho = 1; tamanho <= N; tamanho++) {
+        for (int i = 1; i + tamanho - 1 <= N; i++) {
+            for (int j = 1; j + tamanho - 1 <= N; j++) {
+                int x1 = i, y1 = j;
+                int x2 = i + tamanho - 1, y2 = j + tamanho - 1;
+
+                int pretas = soma_pretas[x2][y2] - soma_pretas[x1 - 1][y2] - soma_pretas[x2][y1 - 1] + soma_pretas[x1 - 1][y1 - 1];
+                int brancas = soma_brancas[x2][y2] - soma_brancas[x1 - 1][y2] - soma_brancas[x2][y1 - 1] + soma_brancas[x1 - 1][y1 - 1];
+
+                if (C == 1 && pretas > 0 && brancas == 0) {
+                    contador++;
+                } else if (C == 2 && brancas > 0 && pretas == 0) {
+                    contador++;
+                }
+            }
+        }
+    }
+    return contador;
+}
+
+int main() {
+    int N, P;
+    while (scanf("%d %d", &N, &P) != EOF) {
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++) {
+                tabuleiro[i][j] = 0;
+                soma_pretas[i][j] = 0;
+                soma_brancas[i][j] = 0;
+            }
+        }
+
+        int L, C;
+        for (int i = 0; i < P; i++) {
+            scanf("%d %d", &L, &C);
+            tabuleiro[L][C] = 1;
+        }
+
+        for (int i = 0; i < P; i++) {
+            scanf("%d %d", &L, &C);
+            tabuleiro[L][C] = 2;
+        }
+
+        preencher_somas(N);
+
+        int areas_pretas = contar_areas(N, P, 1);
+        int areas_brancas = contar_areas(N, P, 2);
+
+        printf("%d %d\n", areas_pretas, areas_brancas);
+    }
+
+    return 0;
+}
